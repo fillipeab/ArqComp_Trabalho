@@ -555,14 +555,5 @@ int main() {
     printf("  - AVX: SIM\n");
     #endif
     
-    printf("\n══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════\n");
-    printf("                                         INTERPRETAÇÃO DOS RESULTADOS\n");
-    printf("══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════\n");
-    printf("1. Matriz pequena (<256): Cache L1/L2 dominante, vetorização mais eficiente\n");
-    printf("2. Matriz média (256-1024): Cache L3 importante, blocking crucial\n");
-    printf("3. Matriz grande (>1024): Memória principal limitante, otimizações de acesso essenciais\n");
-    printf("\n");
-    printf("OBS: Eficiência calculada como (GFLOPS alcançados / GFLOPS teóricos) × 100%%\n");
-    
     return 0;
 }

@@ -4,6 +4,7 @@
 #include <string.h>
 #include <immintrin.h> // Obrigatório para AVX
 #include <stdint.h>
+#include <unistd.h>
 
 // --- CONFIGURAÇÕES ---
 #define BLOCK_SIZE 32   // Otimizado para L1 Cache
