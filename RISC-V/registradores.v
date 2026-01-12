@@ -1,5 +1,6 @@
 module regfile(
     input clk,
+    input reset,
     input we,
     input [4:0] rs1,
     input [4:0] rs2,
@@ -8,14 +9,12 @@ module regfile(
     output [31:0] rd1,
     output [31:0] rd2
 );
-
-    reg [31:0] regs[31:0];
-
-    assign rd1 = (rs1 != 0) ? regs[rs1] : 32'b0;
-    assign rd2 = (rs2 != 0) ? regs[rs2] : 32'b0;
-
-    always @(posedge clk) begin
-        if (we && rd != 0)
-            regs[rd] <= wd;
+    reg [31:0] regs [0:31];
+    integer i;
+    always @(posedge clk or posedge reset) begin
+        if (reset) for (i=0; i<32; i=i+1) regs[i] <= 0;
+        else if (we && rd != 0) regs[rd] <= wd;
     end
+    assign rd1 = (rs1 != 0) ? regs[rs1] : 0;
+    assign rd2 = (rs2 != 0) ? regs[rs2] : 0;
 endmodule
