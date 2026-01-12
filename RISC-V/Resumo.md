@@ -116,7 +116,7 @@ RESUMO DOS COMPONENTES E DECISÕES ARBITRÁRIAS
 4.1 Memória de Instruções (ROM)
 - Endereço: pc_out[31:0]
 - Instrução lida: instruction[31:0]
-- Converter endereço byte para palavra: pc_out[9:2] para ROM de 1KB
+- Converter endereço byte para palavra: pc_out[11:2] para ROM de 1KB
 
 4.2 Memória de Dados (RAM)
 - Endereço: alu_result_out[31:0] (do estágio MEM)
