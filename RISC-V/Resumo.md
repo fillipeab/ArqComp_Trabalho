@@ -315,5 +315,99 @@ STATUS FINAL DO PROJETO:
 
 
 
+### Parte 3 ###
+DECISÕES ARBITRÁRIAS - CÓDIGOS E TAMANHOS
+
+1. CODIFICAÇÃO DA ALU (alu_ctrl[5:0])
+   Bits [5:4]: Modo de operação
+     00 = Escalar (32-bit)
+     01 = 4 elementos de 8-bit
+     10 = 2 elementos de 16-bit
+     11 = Reservado
+   Bits [3:0]: Operação específica
+     0000 = ADD / vadd
+     0001 = SUB / vsub
+     0010 = AND / vand
+     0011 = OR / vor
+     0100 = XOR
+     0101 = SLL
+     0110 = SRL
+     0111 = SRA
+     1000 = LUI (passa imediato)
+   Por que arbitrário: Sequência lógica para facilitar depuração.
+
+2. OPCODE VETORIAL PERSONALIZADO
+   Opcode escolhido: 7'b0100111
+   Por que arbitrário: É um opcode reservado no RISC-V, não conflita com o 
+   padrão (1010111), permite liberdade de design.
+
+3. FORMATO DA INSTRUÇÃO VETORIAL
+   Usa formato R-type (igual add, sub)
+   funct3 define operação (000=vadd.8, 001=vadd.16, etc.)
+   Por que arbitrário: Reutiliza decodificação existente, poderia ser outro formato.
+
+4. TAMANHOS DE MEMÓRIA
+   ROM e RAM: Address bits = 10 (1KB, 256 palavras)
+   Endereçamento: addr[9:2] para converter byte→word
+   Por que arbitrário: Balance entre simplicidade e espaço para testes.
+
+5. CONTROLE DE DOIS NÍVEIS
+   control.v → alu_op[1:0] → alu_control.v → alu_ctrl[5:0]
+   Por que arbitrário: Separa decisões de alto e baixo nível, mas não é obrigatório.
+
+6. HAZARD HANDLING
+   Stall apenas para Load-Use hazard
+   Forwarding apenas de MEM e WB (não de EX)
+   Prioridade: MEM > WB
+   Por que arbitrário: Cobre casos mais comuns, simplifica implementação.
+
+7. OPERAÇÕES VETORIAIS IMPLEMENTADAS
+   Apenas: add, sub, and, or
+   Não: mul, shifts, comparações, saturação, máscaras
+   Por que arbitrário: Foco no conceito SIMD básico, não complexidade.
+
+8. FORMATOS VETORIAIS
+   Apenas: 4x8-bit e 2x16-bit
+   Não: 8x4-bit, 1x32-bit, tamanhos variáveis
+   Por que arbitrário: Casos comuns sem necessidade de CSRs de configuração.
+
+9. PIPELINE CONTROL SEPARADO
+   pipeline_ctrl.v separado de control.v
+   Por que arbitrário: Separa responsabilidades (decodificação vs gerenciamento).
+
+10. RESET ASSÍNCRONO
+    always @(posedge clk or posedge reset)
+    Por que arbitrário: Facilita depuração, comum em FPGAs educacionais.
+
+11. BRANCH PREDICTION
+    Sempre "not taken", flush se branch taken
+    Por que arbitrário: Simplicidade máxima, penalidade de 1 ciclo aceitável.
+
+RESUMO DAS ESCOLHAS DIDÁTICAS:
+1. Foco no pipeline → Instruções vetoriais simplificadas
+2. Foco em hazards → Forwarding/stall básico mas funcional
+3. Foco em conceitos → Não em performance ou completude
+4. Foco em depuração → Sinais explícitos, reset assíncrono
+5. Compatibilidade educacional → Não padrão, mas demonstra extensibilidade
+
+
+
+
+
+
+
+
+
+OBSERVAÇÃO EX/MEM -> RAM:
+Do ex_mem_reg:   alu_result_out[31:0]
+Para RAM:        A[9:2]  ← IMPORTANTE: só bits 9:2!
+
+POR QUÊ? 
+- alu_result_out é endereço de BYTE (0, 4, 8...)
+- RAM espera endereço de PALAVRA (0, 1, 2...)
+- Dividir por 4 = pegar bits [9:2]
+
+
+
 Referencias adicionais:
 https://five-embeddev.com/riscv-v-spec/v1.0/v-spec.html
